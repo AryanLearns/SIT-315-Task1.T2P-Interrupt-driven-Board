@@ -1,26 +1,28 @@
-const int pir_sensor = 2;  
-const int led_pin = 6;     
-volatile int motionDetected = 0;  // Flag indicating motion detection
+const int pir_sensor_interrupt = 3;  // PIR sensor connected to pin 3
+const int led_pin = 5;               // LED connected to digital pin 5
+volatile int motion_Detected = 0;    // Flag indicating motion detection
 void setup() {
-  pinMode(led_pin, OUTPUT);
   Serial.begin(9600);
-  attachInterrupt(digitalPinToInterrupt(pir_sensor), motionInterrupt, HIGH);
-  Serial.println("This is for task interrupt function");
+  Serial.println("This task is for interrupt function");
+  
+  pinMode(led_pin, OUTPUT);
+  attachInterrupt(digitalPinToInterrupt(pir_sensor_interrupt), motionInterrupt, HIGH);
 }
-
 void loop() {
-  if (motionDetected == 1) {
-    digitalWrite(led_pin, HIGH);  // Turning the LED 
-    Serial.println("Motion is detected!");
-    delay(1000);
-    motionDetected = 0; 
-  } else {
-    Serial.println("Motion not detected");
-    digitalWrite(led_pin, LOW);  // Turning the LED off
-  }
-  delay(500);
 }
-
 void motionInterrupt() {
-  motionDetected = 1;  // Set the flag when motion is detected
+  int motion = digitalRead(pir_sensor_interrupt);
+
+  Serial.print("PIR Sensor Value: ");
+  Serial.println(motion);
+
+  if (motion == HIGH) {
+    digitalWrite(led_pin, HIGH);  // Turn on the LED
+    Serial.println("Motion is detected!");
+    delay(100);  // Adjust this delay as needed
+    digitalWrite(led_pin, LOW);   // Turn off the LED
+    motionDetected = 0;           // Reset the flag
+  } else {
+     Optional: Serial.println("Motion not detected");
+  }
 }
